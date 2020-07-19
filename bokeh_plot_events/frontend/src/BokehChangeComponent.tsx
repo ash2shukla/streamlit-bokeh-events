@@ -13,6 +13,13 @@ interface State {
 class BokehChange extends StreamlitComponentBase<State> {
   public state = { eventDetailMap: new Map() };
 
+  handleEvent(event: any) {
+    this.setState(
+      prevState => ({ eventDetailMap: prevState.eventDetailMap.set(event.type, event.detail) }),
+      () => Streamlit.setComponentValue(Object.fromEntries(this.state.eventDetailMap))
+    )
+  }
+
   componentDidMount() {
     const chart: any = document.getElementById(this.props.args["_id"])
 
@@ -22,22 +29,16 @@ class BokehChange extends StreamlitComponentBase<State> {
     }
     const events = this.props.args["events"]
 
-    events.split(",").forEach(
-      (eventName: string) => {
-        document.addEventListener(eventName,
-          (event: any) => {
-            this.setState(
-              prevState => ({ eventDetailMap: prevState.eventDetailMap.set(eventName, event.detail) }),
-              () => Streamlit.setComponentValue(Object.fromEntries(this.state.eventDetailMap))
-            )
-          }
-        );
-      }
-    )
+    events.split(",").forEach((eventName: string) => document.addEventListener(eventName, this.handleEvent))
 
     const bokehJson = this.props.args["bokeh_plot"]
     embed.embed_item(JSON.parse(bokehJson))
     Streamlit.setFrameHeight(window.outerHeight)
+  }
+
+  componentDidUnmount() {
+    const events = this.props.args["events"]
+    events.split(",").forEach((eventName: string) => document.removeEventListener(eventName, this.handleEvent))
   }
 
   public render = (): ReactNode => {

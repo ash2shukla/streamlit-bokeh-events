@@ -13,6 +13,19 @@ interface State {
 class BokehChange extends StreamlitComponentBase<State> {
   public state = { eventDetailMap: new Map() };
 
+  debounced(delay: number, fn: Function) {
+    let timerId: any;
+    return function (...args: any[]) {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+      timerId = setTimeout(() => {
+        fn(...args);
+        timerId = null;
+      }, delay);
+    }
+  }
+
   handleEvent(event: any) {
     this.setState(
       prevState => ({ eventDetailMap: prevState.eventDetailMap.set(event.type, event.detail) }),
@@ -28,17 +41,20 @@ class BokehChange extends StreamlitComponentBase<State> {
       chart.lastChild.remove()
     }
     const events = this.props.args["events"]
+    const debounceTime = this.props.args["debounce_time"]
 
-    events.split(",").forEach((eventName: string) => document.addEventListener(eventName, this.handleEvent))
+    events.split(",").forEach((eventName: string) => document.addEventListener(eventName, this.debounced(debounceTime, this.handleEvent.bind(this))))
 
     const bokehJson = this.props.args["bokeh_plot"]
     embed.embed_item(JSON.parse(bokehJson))
     Streamlit.setFrameHeight(window.outerHeight)
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     const events = this.props.args["events"]
-    events.split(",").forEach((eventName: string) => document.removeEventListener(eventName, this.handleEvent))
+    const debounceTime = this.props.args["debounce_time"]
+    // unsure whether removal of listener is correct or not
+    events.split(",").forEach((eventName: string) => document.removeEventListener(eventName, this.debounced(debounceTime, this.handleEvent.bind(this))))
   }
 
   public render = (): ReactNode => {

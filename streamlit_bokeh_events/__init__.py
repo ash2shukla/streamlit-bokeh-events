@@ -19,6 +19,13 @@ else:
 
 
 def streamlit_bokeh_events(bokeh_plot=None, events="", key=None, debounce_time=1000):
+    """Returns event dict
+
+    Keyword arguments:
+    bokeh_plot -- Bokeh figure object (default None)
+    events -- Comma separated list of events dispatched by bokeh eg. "event1,event2,event3" (default "")
+    debounce_time -- Time in ms to wait before dispatching latest event (default 1000)
+    """
     div_id = "".join(choices(ascii_letters, k=16))
     fig_dict = json_item(bokeh_plot, div_id)
     json_figure = json.dumps(fig_dict)

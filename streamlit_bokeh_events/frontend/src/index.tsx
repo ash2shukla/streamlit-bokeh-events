@@ -1,10 +1,10 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import BokehChange from "./BokehChangeComponent"
+import StreamlitBokehEventsComponent from "./StreamlitBokehEventsComponent"
 
 ReactDOM.render(
   <React.StrictMode>
-    <BokehChange />
+    <StreamlitBokehEventsComponent />
   </React.StrictMode>,
   document.getElementById("root")
 )

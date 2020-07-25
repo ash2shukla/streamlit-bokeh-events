@@ -6,7 +6,7 @@ from random import choices
 from string import ascii_letters
 import streamlit.components.v1 as components
 
-_RELEASE = True
+_RELEASE = False
 
 if not _RELEASE:
     _component_func = components.declare_component(
@@ -53,17 +53,14 @@ if not _RELEASE:
             args=dict(source=source),
             code="""
             document.dispatchEvent(
-                new CustomEvent("TestEvent", {detail: {indices: cb_obj.indices}})
-            )
-            document.dispatchEvent(
-                new CustomEvent("SomeOtherEvent", {detail: {indices: [1, 2, 34]}})
+                new CustomEvent("TestSelectEvent", {detail: {indices: cb_obj.indices}})
             )
         """,
         ),
     )
 
-    event_result = bokeh_plot_events(
-        events="TestEvent,SomeOtherEvent",
+    event_result = streamlit_bokeh_events(
+        events="TestSelectEvent",
         bokeh_plot=plot,
         key="foo",
         debounce_time=1000,

@@ -43,7 +43,7 @@ class StreamlitBokehEventsComponent extends StreamlitComponentBase<State> {
     const events = this.props.args["events"]
     const debounceTime = this.props.args["debounce_time"]
 
-    events.split(",").forEach((eventName: string) => document.addEventListener(eventName, this.debounced(debounceTime, this.handleEvent.bind(this))))
+    events.split(",").forEach((eventName: string) => document.addEventListener(eventName.trim(), this.debounced(debounceTime, this.handleEvent.bind(this))))
 
     const bokehJson = this.props.args["bokeh_plot"]
     embed.embed_item(JSON.parse(bokehJson))
@@ -54,7 +54,7 @@ class StreamlitBokehEventsComponent extends StreamlitComponentBase<State> {
     const events = this.props.args["events"]
     const debounceTime = this.props.args["debounce_time"]
     // unsure whether removal of listener is correct or not
-    events.split(",").forEach((eventName: string) => document.removeEventListener(eventName, this.debounced(debounceTime, this.handleEvent.bind(this))))
+    events.split(",").forEach((eventName: string) => document.removeEventListener(eventName.trim(), this.debounced(debounceTime, this.handleEvent.bind(this))))
   }
 
   public render = (): ReactNode => {

@@ -1,4 +1,4 @@
-# Bokeh Plot Events
+# Streamlit Bokeh Events
 A streamlit component for bi-directional communication with bokeh plots.
 
 #### Its just a workaround till streamlit team releases support for bi-directional communication with plots.
@@ -10,7 +10,7 @@ A streamlit component for bi-directional communication with bokeh plots.
 ## Installation
 
 ```bash
-pip install bokeh-plot-events
+pip install streamlit-bokeh-events
 ```
 ## Usage
 
@@ -20,7 +20,7 @@ from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, CustomJS
 
 # import function
-from bokeh_plot_events import bokeh_plot_events
+from streamlit_bokeh_events import streamlit_bokeh_events
 
 # create plot
 p = figure(tools="lasso_select")
@@ -48,8 +48,8 @@ cds.selected.js_on_change(
 # result will be a dict of {event_name: event.detail}
 # events by default is "", in case of more than one events pass it as a comma separated values
 # event1,event2 
-# ( no spaces )
-result = bokeh_plot_events(bokeh_plot=p, events="YOUR_EVENT_NAME", key="foo")
+# debounce is in ms
+result = streamlit_bokeh_events(bokeh_plot=p, events="YOUR_EVENT_NAME", key="foo", debounce=500)
 
 # use the result
 st.write(result)

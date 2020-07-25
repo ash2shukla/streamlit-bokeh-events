@@ -1,8 +1,8 @@
 import setuptools
 
 setuptools.setup(
-    name="bokeh-plot-events",
-    version="0.0.2",
+    name="streamlit-bokeh-events",
+    version="0.0.1",
     author="Ashish Shukla",
     author_email="ash2shukla@gmail.com",
     description="A custom streamlit component to return js event values from bokeh plots to streamlit",

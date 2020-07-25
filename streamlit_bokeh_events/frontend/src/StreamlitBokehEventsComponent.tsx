@@ -10,7 +10,7 @@ interface State {
   eventDetailMap: Map<string, object>;
 }
 
-class BokehChange extends StreamlitComponentBase<State> {
+class StreamlitBokehEventsComponent extends StreamlitComponentBase<State> {
   public state = { eventDetailMap: new Map() };
 
   debounced(delay: number, fn: Function) {
@@ -64,4 +64,4 @@ class BokehChange extends StreamlitComponentBase<State> {
   }
 }
 
-export default withStreamlitConnection(BokehChange)
+export default withStreamlitConnection(StreamlitBokehEventsComponent)

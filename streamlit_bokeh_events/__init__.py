@@ -6,19 +6,19 @@ from random import choices
 from string import ascii_letters
 import streamlit.components.v1 as components
 
-_RELEASE = False
+_RELEASE = True
 
 if not _RELEASE:
     _component_func = components.declare_component(
-        "bokeh_plot_events", url="http://localhost:3001",
+        "streamlit_bokeh_events", url="http://localhost:3001",
     )
 else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
-    _component_func = components.declare_component("bokeh_plot_events", path=build_dir)
+    _component_func = components.declare_component("streamlit_bokeh_events", path=build_dir)
 
 
-def bokeh_plot_events(bokeh_plot=None, events="", key=None, debounce_time=1000):
+def streamlit_bokeh_events(bokeh_plot=None, events="", key=None, debounce_time=1000):
     div_id = "".join(choices(ascii_letters, k=16))
     fig_dict = json_item(bokeh_plot, div_id)
     json_figure = json.dumps(fig_dict)

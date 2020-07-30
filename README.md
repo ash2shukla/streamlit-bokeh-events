@@ -49,7 +49,7 @@ cds.selected.js_on_change(
 # events by default is "", in case of more than one events pass it as a comma separated values
 # event1,event2 
 # debounce is in ms
-result = streamlit_bokeh_events(bokeh_plot=p, events="YOUR_EVENT_NAME", key="foo", debounce=500)
+result = streamlit_bokeh_events(bokeh_plot=p, events="YOUR_EVENT_NAME", key="foo", debounce_time=500)
 
 # use the result
 st.write(result)

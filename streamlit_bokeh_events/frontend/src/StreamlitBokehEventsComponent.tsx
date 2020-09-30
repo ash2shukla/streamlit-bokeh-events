@@ -32,8 +32,8 @@ class StreamlitBokehEventsComponent extends StreamlitComponentBase<State> {
       () => Streamlit.setComponentValue(Object.fromEntries(this.state.eventDetailMap))
     )
   }
-
-  componentDidMount() {
+  
+  _plotChart() {
     const chart: any = document.getElementById(this.props.args["_id"])
 
     // empty the element
@@ -46,8 +46,21 @@ class StreamlitBokehEventsComponent extends StreamlitComponentBase<State> {
     events.split(",").forEach((eventName: string) => document.addEventListener(eventName.trim(), this.debounced(debounceTime, this.handleEvent.bind(this))))
 
     const bokehJson = this.props.args["bokeh_plot"]
-    embed.embed_item(JSON.parse(bokehJson))
-    Streamlit.setFrameHeight(window.outerHeight)
+    const figure = JSON.parse(bokehJson)
+    embed.embed_item(figure)
+    const plot = figure && figure.doc && figure.doc.roots && figure.doc.roots.references
+        ? figure.doc.roots.references.find((e: any) => e.type === "Plot")
+        : undefined
+    // if height is not defined pick up the default bokeh plot height.
+    const height = plot.attributes.plot_height || 600;
+    Streamlit.setFrameHeight(height);
+  }
+  componentDidMount() {
+    this._plotChart();
+  }
+
+  componentDidUpdate() {
+    this._plotChart();
   }
 
   componentWillUnmount() {

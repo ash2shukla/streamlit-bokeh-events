@@ -53,7 +53,7 @@ if not _RELEASE:
     
     st.subheader("Select Points From Map")
 
-    plot = figure( tools="lasso_select", width=250, height=250)
+    plot = figure( tools="lasso_select", sizing_mode='stretch_both')
     plot.circle(x="x", y="y", size="size", source=source, alpha=0.6)
 
     source.selected.js_on_change(

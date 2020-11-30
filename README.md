@@ -5,7 +5,9 @@ A streamlit component for bi-directional communication with bokeh plots.
 
 ## Demo
 
-![demo](assets/demo.gif)
+![demo](assets/plots.gif)
+
+![demo2](assets/table.gif)
 
 ## Installation
 
@@ -49,7 +51,15 @@ cds.selected.js_on_change(
 # events by default is "", in case of more than one events pass it as a comma separated values
 # event1,event2 
 # debounce is in ms
-result = streamlit_bokeh_events(bokeh_plot=p, events="YOUR_EVENT_NAME", key="foo", debounce_time=500)
+# refresh_on_update should be set to False only if we dont want to update datasource at runtime
+# override_height overrides the viewport height
+result = streamlit_bokeh_events(
+        bokeh_plot=p,
+        events="YOUR_EVENT_NAME",
+        key="foo",
+        refresh_on_update=False,
+        override_height=600,
+        debounce_time=500)
 
 # use the result
 st.write(result)

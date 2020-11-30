@@ -52,15 +52,21 @@ class StreamlitBokehEventsComponent extends StreamlitComponentBase<State> {
         ? figure.doc.roots.references.find((e: any) => e.type === "Plot")
         : undefined
     // if height is not defined pick up the default bokeh plot height.
-    const height = plot.attributes.plot_height || 600;
+    let height = (plot && plot.attributes.plot_height) || 600;
+    if (this.props.args["override_height"]) {
+      height = this.props.args["override_height"]
+    }
     Streamlit.setFrameHeight(height);
   }
+
   componentDidMount() {
     this._plotChart();
   }
 
   componentDidUpdate() {
-    this._plotChart();
+    if ( this.props.args["refresh_on_update"]) {
+      this._plotChart();
+    }
   }
 
   componentWillUnmount() {

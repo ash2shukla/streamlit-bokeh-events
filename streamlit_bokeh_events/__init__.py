@@ -18,14 +18,20 @@ else:
     _component_func = components.declare_component("streamlit_bokeh_events", path=build_dir)
 
 
-def streamlit_bokeh_events(bokeh_plot=None, events="", key=None, debounce_time=1000):
+def streamlit_bokeh_events(bokeh_plot=None, events="", key=None, debounce_time=1000, refresh_on_update=True, override_height=None):
     """Returns event dict
 
     Keyword arguments:
     bokeh_plot -- Bokeh figure object (default None)
     events -- Comma separated list of events dispatched by bokeh eg. "event1,event2,event3" (default "")
     debounce_time -- Time in ms to wait before dispatching latest event (default 1000)
+    refresh_on_update -- Should the chart be re-rendered on refresh (default False)
+        : Set to False if you are not updating the datasource at runtime
+    override_height -- Override plot viewport height
     """
+    if key is None:
+        raise ValueError("key can not be None.")
+
     div_id = "".join(choices(ascii_letters, k=16))
     fig_dict = json_item(bokeh_plot, div_id)
     json_figure = json.dumps(fig_dict)
@@ -36,52 +42,79 @@ def streamlit_bokeh_events(bokeh_plot=None, events="", key=None, debounce_time=1
         _id=div_id,
         default=None,
         debounce_time=debounce_time,
+        refresh_on_update=refresh_on_update,
+        override_height=override_height
     )
     return component_value
 
 
 if not _RELEASE:
     import streamlit as st
-    from bokeh.models import ColumnDataSource, CustomJS
-    from bokeh.plotting import figure
     import pandas as pd
-    import numpy as np
+    from bokeh.plotting import figure
+    from bokeh.models import ColumnDataSource, CustomJS
+    from bokeh.models import DataTable, TableColumn
+    from bokeh.plotting import figure
 
-    df = pd.DataFrame({"x": np.random.rand(500), "y": np.random.rand(500), "size": np.random.rand(500) * 10})
+    st.set_page_config(layout="wide")
+    # import function
+    # from streamlit_bokeh_events import streamlit_bokeh_events
+    col1, col2 = st.beta_columns(2)
+    df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
+    # create plot
+    cds = ColumnDataSource(df)
+    columns = list(map(lambda colname: TableColumn(field=colname, title=colname), df.columns))
 
-    source = ColumnDataSource(df)
-    
-    st.subheader("Select Points From Map")
-
-    plot = figure( tools="lasso_select", sizing_mode='stretch_both')
-    plot.circle(x="x", y="y", size="size", source=source, alpha=0.6)
-
-    source.selected.js_on_change(
+    # define events
+    cds.selected.js_on_change(
         "indices",
         CustomJS(
-            args=dict(source=source),
+            args=dict(source=cds),
             code="""
             document.dispatchEvent(
-                new CustomEvent("TestSelectEvent", {detail: {indices: cb_obj.indices}})
+                new CustomEvent("INDEX_SELECT", {detail: {data: source.selected.indices}})
             )
-        """,
-        ),
+            """
+        )
     )
 
-    event_result = streamlit_bokeh_events(
-        events="TestSelectEvent",
-        bokeh_plot=plot,
-        key="foo",
-        debounce_time=1000,
+    table = DataTable(source=cds, columns=columns)
+    with col1:
+        result = streamlit_bokeh_events(
+            bokeh_plot=table,
+            events="INDEX_SELECT",
+            key="foo",
+            refresh_on_update=False,
+            debounce_time=0,
+            override_height=500
+        )
+        if result:
+            if result.get("INDEX_SELECT"):
+                st.write(df.iloc[result.get("INDEX_SELECT")["data"]])
+
+    plot = figure(tools="lasso_select,zoom_in")
+    df["colors"] = df.species.replace({"setosa": "#583d72", "versicolor": "#9f5f80", "virginica": "#ffba93"})
+    cds_lasso = ColumnDataSource(df)
+    cds_lasso.selected.js_on_change(
+        "indices",
+        CustomJS(
+            args=dict(source=cds_lasso),
+            code="""
+            document.dispatchEvent(
+                new CustomEvent("LASSO_SELECT", {detail: {data: source.selected.indices}})
+            )
+            """
+        )
     )
 
-    # some event was thrown
-    if event_result is not None:
-        # TestSelectEvent was thrown
-        if "TestSelectEvent" in event_result:
-            st.subheader("Selected Points' Pandas Stat summary")
-            indices = event_result["TestSelectEvent"].get("indices", [])
-            st.table(df.iloc[indices].describe())
-
-    st.subheader("Raw Event Data")
-    st.write(event_result)
+    plot.circle("sepal_length", "sepal_width", fill_alpha=0.5, color="colors", size=10, line_color=None, source=cds_lasso)
+    with col2:
+        result_lasso = streamlit_bokeh_events(
+            bokeh_plot=plot,
+            events="LASSO_SELECT",
+            key="bar",
+            refresh_on_update=False,
+            debounce_time=0)
+        if result_lasso:
+            if result_lasso.get("LASSO_SELECT"):
+                st.write(df.iloc[result_lasso.get("LASSO_SELECT")["data"]])

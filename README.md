@@ -16,6 +16,9 @@ A streamlit component for bi-directional communication with bokeh plots.
 #### Color Picker
 ![demo3](assets/color.gif)
 
+#### Run Any Custom JS
+![demo4](assets/location.gif)
+
 ## Installation
 
 ```bash

@@ -5,9 +5,16 @@ A streamlit component for bi-directional communication with bokeh plots.
 
 ## Demo
 
+#### Plots
 ![demo](assets/plots.gif)
+---
+#### Widgets
 
+#### Data Tables
 ![demo2](assets/table.gif)
+
+#### Color Picker
+![demo3](assets/color.gif)
 
 ## Installation
 

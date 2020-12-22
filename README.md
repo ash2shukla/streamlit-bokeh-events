@@ -19,6 +19,9 @@ A streamlit component for bi-directional communication with bokeh plots.
 #### Run Any Custom JS
 ![demo4](assets/location.gif)
 
+#### Get data from Clipboard
+![demo5](assets/clipboard.gif)
+
 ## Installation
 
 ```bash

@@ -9,7 +9,7 @@ from streamlit_bokeh_events import streamlit_bokeh_events
 st.set_page_config(layout="wide")
 # import function
 # from streamlit_bokeh_events import streamlit_bokeh_events
-col1, col2 = st.beta_columns(2)
+col1, col2 = st.columns(2)
 df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
 # create plot
 cds = ColumnDataSource(df)

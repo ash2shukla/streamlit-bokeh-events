@@ -1,3 +1,8 @@
+# NOTE
+Due to some personal issues I am unable to maintain the project for quite a while.
+I am archiving this project and there wont be further updates in it.
+Thanks to those who used the package. 
+
 # Streamlit Bokeh Events
 A streamlit component for bi-directional communication with bokeh plots.
 
